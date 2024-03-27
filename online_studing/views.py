@@ -1,7 +1,7 @@
 from rest_framework import viewsets, generics
 
 from online_studing.models import Course, Lesson
-from online_studing.serializers import CourseSerializer, LessonSerializer
+from online_studing.serializers import CourseSerializer, LessonSerializer, LessonListSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -14,7 +14,8 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
 
 class LessonListAPIView(generics.ListAPIView):
-    serializer_class = LessonSerializer
+    serializer_class = LessonListSerializer
+    # serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
 
 
