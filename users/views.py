@@ -1,11 +1,10 @@
-from rest_framework import generics
-
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics
 from rest_framework.filters import OrderingFilter
-
-
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from users.models import User, Payment
+from users.permissions import IsOwner, IsModerator, IsSuperuser
 from users.serializers import UserSerializer, PaymentSerializer
 
 
@@ -21,11 +20,40 @@ from users.serializers import UserSerializer, PaymentSerializer
 class UserListAPIView(generics.ListAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
+    permission_classes = [IsAuthenticated,IsSuperuser]
+
+
+class UserDetailAPIView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticated,IsSuperuser]
 
 
 class UserCreateAPIView(generics.CreateAPIView):
     serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+
+    def perform_create(self, serializer):  # сохранение зашифрованного пароля
+        user = serializer.save(is_active=True)
+        user.set_password(user.password)
+        user.save()
+
+
+class UserUpdateAPIView(generics.UpdateAPIView):
+    serializer_class = UserSerializer
     queryset = User.objects.all()
+    permission_classes = [IsAuthenticated, IsOwner | IsModerator]
+
+    def perform_update(self, serializer):  # сохранение зашифрованного пароля
+        user = serializer.save(is_active=True)
+        user.set_password(user.password)
+        user.save()
+
+
+class UserDeleteAPIView(generics.DestroyAPIView):
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticated, IsOwner]
+
 
 
 class PaymentListAPIView(generics.ListAPIView):
@@ -34,6 +62,4 @@ class PaymentListAPIView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ('paid_course', 'paid_lesson', 'pay_method')
     ordering_fields = ('payment_date',)
-
-
-
+    permission_classes = [IsAuthenticated, IsSuperuser]
