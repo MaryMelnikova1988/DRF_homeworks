@@ -2,6 +2,7 @@ from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 
 from online_studing.models import Course, Lesson
+from online_studing.paginators import CoursePaginator, LessonPaginator
 from online_studing.permissions import IsOwner
 from online_studing.serializers import CourseSerializer, LessonSerializer, LessonListSerializer
 from users.permissions import IsModerator
@@ -11,6 +12,7 @@ from users.permissions import IsModerator
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    pagination_class = CoursePaginator
 
     def get_queryset(self):
         if not self.request.user.groups.filter(name='moderator').exists():
@@ -43,6 +45,7 @@ class LessonListAPIView(generics.ListAPIView):
     # serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsOwner | IsModerator]
+    pagination_class = LessonPaginator
 
     def get_queryset(self):
         if not self.request.user.groups.filter(name='moderator').exists():
