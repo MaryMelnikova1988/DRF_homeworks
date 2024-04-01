@@ -2,8 +2,10 @@ from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 
 from online_studing.models import Course, Lesson
+from online_studing.permissions import IsOwner
 from online_studing.serializers import CourseSerializer, LessonSerializer, LessonListSerializer
-from users.permissions import IsModerator, IsOwner
+from users.permissions import IsModerator
+
 
 
 class CourseViewSet(viewsets.ModelViewSet):
