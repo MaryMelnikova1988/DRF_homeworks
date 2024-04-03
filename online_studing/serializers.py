@@ -1,8 +1,14 @@
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 
-from online_studing.models import Course, Lesson
+from online_studing.models import Course, Lesson, Subscription
 from online_studing.validators import UrlValidator
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = '__all__'
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -15,14 +21,21 @@ class LessonSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     lessons_count = serializers.SerializerMethodField()
     lessons = LessonSerializer(source="lesson_set", many=True, read_only=True)
-
+    is_subscribed = serializers.SerializerMethodField()
 
     def get_lessons_count(self, instance):
         return instance.lesson_set.count()
 
+    def get_is_subscribed(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            return Subscription.objects.filter(user=user, course=obj).exists()
+        return False
+
     class Meta:
         model = Course
         fields = '__all__'
+
 
 class LessonListSerializer(serializers.ModelSerializer):
     course = SlugRelatedField(slug_field='title', queryset=Lesson.objects.all())
@@ -31,5 +44,3 @@ class LessonListSerializer(serializers.ModelSerializer):
         model = Course
         fields = '__all__'
         # fields = ("title", "course", )
-
-

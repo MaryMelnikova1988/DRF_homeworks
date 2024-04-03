@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from online_studing.apps import OnlineStudingConfig
 from online_studing.views import CourseViewSet, LessonCreateAPIView, LessonListAPIView, LessonRetrieveAPIView, \
-    LessonUpdateAPIView, LessonDestroyAPIView
+    LessonUpdateAPIView, LessonDestroyAPIView, SubscriptionAPIView
 
 app_name = OnlineStudingConfig.name
 
@@ -14,7 +14,7 @@ urlpatterns = [
                   path('lessons/create/', LessonCreateAPIView.as_view(), name='lesson_create'),
                   path('lessons/', LessonListAPIView.as_view(), name='lesson_list'),
                   path('lessons/<int:pk>/', LessonRetrieveAPIView.as_view(), name='lesson_get'),
-                  path('lessons/update/<int:pk>/',LessonUpdateAPIView.as_view(), name='lesson_update'),
+                  path('lessons/update/<int:pk>/', LessonUpdateAPIView.as_view(), name='lesson_update'),
                   path('lessons/delete/<int:pk>/', LessonDestroyAPIView.as_view(), name='lesson_delete'),
-
+                  path('subscription/', SubscriptionAPIView.as_view(), name='subscription'),
               ] + router.urls

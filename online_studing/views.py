@@ -1,12 +1,14 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from online_studing.models import Course, Lesson
+from online_studing.models import Course, Lesson, Subscription
 from online_studing.paginators import CoursePaginator, LessonPaginator
 from online_studing.permissions import IsOwner
 from online_studing.serializers import CourseSerializer, LessonSerializer, LessonListSerializer
 from users.permissions import IsModerator
-
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -68,3 +70,22 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsOwner]
+
+
+class SubscriptionAPIView(APIView):
+
+    def post(self, *args, **kwargs):
+
+        user = self.request.user
+        course_id = self.request.data.get('course')
+        course_item = get_object_or_404(Course, pk=course_id)
+
+        subs_item, created = Subscription.objects.get_or_create(user=user, course=course_item)
+
+        if created:
+            message = 'Вы подписались на обновления курса'
+        else:
+            subs_item.delete()
+            message = 'Вы отписались от обновления курса'
+
+        return Response({"message": message})

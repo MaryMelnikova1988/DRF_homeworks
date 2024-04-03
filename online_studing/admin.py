@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from online_studing.models import Course, Lesson
+from online_studing.models import Course, Lesson, Subscription
 
 
 # Register your models here.
@@ -13,3 +13,8 @@ class CourseAdmin(admin.ModelAdmin):
 class LessonAdmin(admin.ModelAdmin):
     list_display = ('pk', 'title', 'preview', 'description',)
     list_filter = ('title',)
+
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = ('pk',  'course', 'user',)
+    # list_filter = ('title',)
