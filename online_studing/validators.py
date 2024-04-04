@@ -9,6 +9,6 @@ class UrlValidator:
     def __call__(self, value):
         url_valid = value.get(self.field)
         if url_valid:
-            if 'youtube.com/' in url_valid:
+            if 'www.youtube.com/' in url_valid:
                 return value
             raise ValidationError('Ссылки на сторонние видео запрещены')

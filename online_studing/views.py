@@ -75,17 +75,18 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 class SubscriptionAPIView(APIView):
 
     def post(self, *args, **kwargs):
-
+        """Метод для изменения состояния подписки"""
         user = self.request.user
         course_id = self.request.data.get('course')
         course_item = get_object_or_404(Course, pk=course_id)
 
-        subs_item, created = Subscription.objects.get_or_create(user=user, course=course_item)
+        subs_item = Subscription.objects.filter(user=user, course=course_item)
+        #     subs_item, created = Subscription.objects.get_or_create(user=user, course=course_item)
 
-        if created:
-            message = 'Вы подписались на обновления курса'
-        else:
+        if subs_item.exists():
             subs_item.delete()
             message = 'Вы отписались от обновления курса'
-
+        else:
+            Subscription.objects.create(user=user, course=course_item)
+            message = 'Вы подписались на обновления курса'
         return Response({"message": message})
