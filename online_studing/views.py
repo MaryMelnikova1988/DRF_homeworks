@@ -22,7 +22,10 @@ class CourseViewSet(viewsets.ModelViewSet):
         return Course.objects.all()
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        # serializer.save(owner=self.request.user)
+        new_course = serializer.save()
+        new_course.user = self.request.user
+        new_course.save()
 
     def get_permissions(self):
         if self.action == 'create':
