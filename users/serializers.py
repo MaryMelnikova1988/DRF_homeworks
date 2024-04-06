@@ -27,3 +27,8 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = '__all__'
+
+# class PaymentCreateSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Payment
+#         fields = ['price','paid_course',]

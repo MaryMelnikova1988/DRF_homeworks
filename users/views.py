@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from users.models import User, Payment
 from users.permissions import IsOwner, IsModerator, IsSuperuser
 from users.serializers import UserSerializer, PaymentSerializer
+from users.services import create_stripe_product, create_stripe_price, create_stripe_session
 
 
 # class UserAPIView(APIView):
@@ -20,13 +21,13 @@ from users.serializers import UserSerializer, PaymentSerializer
 class UserListAPIView(generics.ListAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated,IsSuperuser]
+    permission_classes = [IsAuthenticated, IsSuperuser]
 
 
 class UserDetailAPIView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated,IsSuperuser]
+    permission_classes = [IsAuthenticated, IsSuperuser]
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -55,7 +56,6 @@ class UserDeleteAPIView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
 
-
 class PaymentListAPIView(generics.ListAPIView):
     serializer_class = PaymentSerializer
     queryset = Payment.objects.all()
@@ -63,3 +63,15 @@ class PaymentListAPIView(generics.ListAPIView):
     filterset_fields = ('paid_course', 'paid_lesson', 'pay_method')
     ordering_fields = ('payment_date',)
     permission_classes = [IsAuthenticated, IsSuperuser]
+
+
+class PaymentCreateView(generics.CreateAPIView):
+    serializer_class = PaymentSerializer
+
+    def perform_create(self, serializer):
+        payment = serializer.save()
+        payment.user = self.request.user
+        stripe_price_product = create_stripe_product(payment.paid_course.title)
+        stripe_price_id = create_stripe_price(payment.price, stripe_price_product)
+        payment.payment_link, payment.payment_id = create_stripe_session(stripe_price_id)
+        payment.save()
