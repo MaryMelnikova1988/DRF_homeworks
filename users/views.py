@@ -1,11 +1,13 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics
+from rest_framework import generics, serializers
 from rest_framework.filters import OrderingFilter
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
+from online_studing.models import Course
 from users.models import User, Payment
 from users.permissions import IsOwner, IsModerator, IsSuperuser
-from users.serializers import UserSerializer, PaymentSerializer
+from users.serializers import UserSerializer, PaymentSerializer, PaymentCreateSerializer
 from users.services import create_stripe_product, create_stripe_price, create_stripe_session
 
 
@@ -66,12 +68,19 @@ class PaymentListAPIView(generics.ListAPIView):
 
 
 class PaymentCreateView(generics.CreateAPIView):
-    serializer_class = PaymentSerializer
+    serializer_class = PaymentCreateSerializer
 
     def perform_create(self, serializer):
-        payment = serializer.save()
-        payment.user = self.request.user
-        stripe_price_product = create_stripe_product(payment.paid_course.title)
-        stripe_price_id = create_stripe_price(payment.price, stripe_price_product)
-        payment.payment_link, payment.payment_id = create_stripe_session(stripe_price_id)
-        payment.save()
+
+        serializer.save(owner=self.request.user)
+        course = serializer.validated_data.get('course')
+
+        if course in Course.objects.filter(owner=self.request.user):
+            payment = serializer.save()
+            stripe_price_product = create_stripe_product(payment.course.title)
+            stripe_price_id = create_stripe_price(payment.course.price, stripe_price_product)
+            payment.payment_link, payment.payment_id = create_stripe_session(stripe_price_id)
+            payment.save()
+        else:
+            raise serializers.ValidationError('Укажите правильный курс для оплаты из посещаемых Вами')
+

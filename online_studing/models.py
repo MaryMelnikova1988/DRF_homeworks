@@ -9,6 +9,7 @@ class Course(models.Model):
     description = models.TextField(verbose_name='Описание курса')
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True,
                               verbose_name='Владелец')
+    price = models.PositiveIntegerField(default=10000, verbose_name='стоимость курса')
 
     def str(self):
         return f'{self.title}'

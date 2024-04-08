@@ -28,13 +28,15 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, instance):
         user = self.context['request'].user
-        if Subscription.objects.filter(owner=user, course=instance).exists():
+        if Subscription.objects.filter(user=user, course=instance).exists():
             return True
         return False
+
 
     class Meta:
         model = Course
         fields = '__all__'
+        # fields = ("title", )
 
 
 class LessonListSerializer(serializers.ModelSerializer):
