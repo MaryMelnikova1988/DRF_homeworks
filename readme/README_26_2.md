@@ -33,9 +33,9 @@ is_active
 Дополнительное задание, помеченное звездочкой, желательно, но не обязательно выполнять.
 
 //полезные команды
-не забывать сделать в консоли
-wsl sudo service redis-server start
-celery -A config worker -l INFO -P eventlet
-celery -A config beat -l INFO -S django
- python manage.py migrate
+сделать в консоли:
+* wsl sudo service redis-server start
+* celery -A config worker -l INFO -P eventlet
+* celery -A config beat -l INFO -S django
+* python manage.py migrate
 
