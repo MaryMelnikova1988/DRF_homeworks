@@ -8,6 +8,7 @@ from online_studing.models import Course, Lesson, Subscription
 from online_studing.paginators import CoursePaginator, LessonPaginator
 from online_studing.permissions import IsOwner
 from online_studing.serializers import CourseSerializer, LessonSerializer, LessonListSerializer
+from online_studing.tasks import send_mail_about_update_course
 from users.permissions import IsModerator
 
 
@@ -24,6 +25,11 @@ class CourseViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+    def perform_update(self, serializer):
+        updated_course = serializer.save()
+        instance = serializer.instance
+        send_mail_about_update_course.delay(instance)
+        updated_course.save()
 
     def get_permissions(self):
         if self.action == 'create':
