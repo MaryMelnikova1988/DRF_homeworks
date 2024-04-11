@@ -31,3 +31,11 @@ is_active
 Обратите внимание на timezone вашего приложения и timezone в настройках celery: важно, чтобы они были одинаковыми, чтобы задачи запускались в корректное время.
 
 Дополнительное задание, помеченное звездочкой, желательно, но не обязательно выполнять.
+
+//полезные команды
+не забывать сделать в консоли
+wsl sudo service redis-server start
+celery -A config worker -l INFO -P eventlet
+celery -A config beat -l INFO -S django
+ python manage.py migrate
+
