@@ -181,9 +181,9 @@ CELERY_TIMEZONE = TIME_ZONE
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 
 if DEBUG:
-    EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 else:
-    EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = os.getenv('EMAIL_HOST')
     EMAIL_PORT = os.getenv('EMAIL_PORT')
     EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL')

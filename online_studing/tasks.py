@@ -13,6 +13,7 @@ def send_mail_about_update_course(course_id):
     subs = subs.select_related('user')
     recipient_list = subs.values_list('user__email', flat=True)
 
+
     send_mail(
         subject=f'{course.title}',
         message=f'В {course.title} появились обновления',
