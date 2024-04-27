@@ -28,4 +28,8 @@
 * Запуск контейнеров в фоне: docker-compose up -d
 * Сборка образа и запуск в фоне после успешной сборки: docker-compose up -d —build
 * Выполнение команды внутри контейнера app: docker-compose exec app <здесь ваша команда>
+* Остановка контейнеров: docker-compose stop
+* Удаление контейнеров: docker-compose down
+
+* Проверка в shelle всех запущенных и остановленных контейнеров: docker ps -a 
 
