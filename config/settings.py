@@ -177,18 +177,20 @@ STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
 CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
 CELERY_TIMEZONE = TIME_ZONE
+#
+# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+# EMAIL_HOST_USER = 'django.core.mail.backends.smtp.EmailBackend'
 
+#
+# if DEBUG:
+#     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# else:
+#     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-else:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = os.getenv('EMAIL_HOST')
-    EMAIL_PORT = os.getenv('EMAIL_PORT')
-    EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL')
-    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD ')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 CELERY_BEAT_SCHEDULE = {
     'task-name': {
